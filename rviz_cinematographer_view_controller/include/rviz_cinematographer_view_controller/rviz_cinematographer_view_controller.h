@@ -364,7 +364,7 @@ protected:    //members
 
   // Variables used during animation
   bool animate_;
-  ros::WallTime transition_start_time_;
+  ros::Time transition_start_time_;
   BufferCamMovements cam_movements_buffer_;
 
   std::shared_ptr<rviz::Shape> focal_shape_;    ///< A small ellipsoid to show the focus point.

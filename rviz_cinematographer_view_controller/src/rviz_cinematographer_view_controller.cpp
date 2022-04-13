@@ -508,7 +508,7 @@ void CinematographerViewController::beginNewTransition(const Ogre::Vector3& eye,
   // if the buffer is empty we set the first element in it to the current camera pose
   if(cam_movements_buffer_.empty())
   {
-    transition_start_time_ = ros::WallTime::now();
+    transition_start_time_ = ros::Time::now();
 
     cam_movements_buffer_.push_back(std::move(OgreCameraMovement(eye_point_property_->getVector(),
                                                                  focus_point_property_->getVector(),
@@ -673,7 +673,7 @@ void CinematographerViewController::update(float dt, float ros_dt)
     }
     else
     {
-      ros::WallDuration duration_from_start = ros::WallTime::now() - transition_start_time_;
+      ros::Duration duration_from_start = ros::Time::now() - transition_start_time_;
       relative_progress_in_time = duration_from_start.toSec() / goal->transition_duration.toSec();
     }
 
@@ -726,7 +726,7 @@ void CinematographerViewController::update(float dt, float ros_dt)
         // reset animate to perform the next movement
         animate_ = true;
         // update the transition start time with the duration the transition should have taken
-        transition_start_time_ += ros::WallDuration(cam_movements_buffer_.front().transition_duration.toSec());
+        transition_start_time_ += ros::Duration(cam_movements_buffer_.front().transition_duration.toSec());
       }
       else
       {
@@ -739,7 +739,7 @@ void CinematographerViewController::update(float dt, float ros_dt)
           rviz_cinematographer_msgs::Finished finished;
           finished.is_finished = true;
           // wait a little so last image is send before this "finished"-message 
-          ros::WallRate r(1); r.sleep();
+          ros::Rate r(1); r.sleep();
           finished_rendering_trajectory_pub_.publish(finished);
           render_frame_by_frame_ = false;
         }
@@ -760,7 +760,7 @@ void CinematographerViewController::publishViewImage()
   // wait for specified duration - e.g. if recorder is not fast enough
   if(do_wait_)
   {
-    ros::WallRate r(1.f / wait_duration_);
+    ros::Rate r(1.f / wait_duration_);
     r.sleep();
     do_wait_ = false;
   }
