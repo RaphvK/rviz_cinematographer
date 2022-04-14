@@ -385,6 +385,7 @@ protected:    //members
   bool render_frame_by_frame_;
   int target_fps_;
   int recorded_frames_counter_;
+  ros::Rate target_fps_rate_;
 
   bool do_wait_;
   float wait_duration_;

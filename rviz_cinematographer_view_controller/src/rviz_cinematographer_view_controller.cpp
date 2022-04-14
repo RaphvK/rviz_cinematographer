@@ -69,6 +69,7 @@ CinematographerViewController::CinematographerViewController()
     , render_frame_by_frame_(false)
     , target_fps_(60)
     , recorded_frames_counter_(0)
+    , target_fps_rate_(60)
     , do_wait_(false)
     , wait_duration_(-1.f)
 {
@@ -131,6 +132,7 @@ void CinematographerViewController::setRecord(const rviz_cinematographer_msgs::R
     max_fps = 60;
 
   target_fps_ = std::max(1, std::min(max_fps, (int)record_params->frames_per_second));
+  target_fps_rate_ = ros::Rate(target_fps_);
 }
 
 void CinematographerViewController::setWaitDuration(const rviz_cinematographer_msgs::Wait::ConstPtr& wait_duration)
@@ -666,16 +668,8 @@ void CinematographerViewController::update(float dt, float ros_dt)
     auto goal = ++(cam_movements_buffer_.begin());
 
     double relative_progress_in_time = 0.0;
-    if(render_frame_by_frame_)
-    {
-      relative_progress_in_time = recorded_frames_counter_ / (target_fps_ * goal->transition_duration.toSec());
-      recorded_frames_counter_++;
-    }
-    else
-    {
-      ros::Duration duration_from_start = ros::Time::now() - transition_start_time_;
-      relative_progress_in_time = duration_from_start.toSec() / goal->transition_duration.toSec();
-    }
+    ros::Duration duration_from_start = ros::Time::now() - transition_start_time_;
+    relative_progress_in_time = duration_from_start.toSec() / goal->transition_duration.toSec();
 
     // make sure we get all the way there before turning off
     if(relative_progress_in_time >= 1.0)
@@ -711,7 +705,12 @@ void CinematographerViewController::update(float dt, float ros_dt)
     publishCameraPose();
 
     if(render_frame_by_frame_ && image_pub_.getNumSubscribers() > 0)
+    {
+      // ensure to keep desired FPS
+      target_fps_rate_.sleep();
+
       publishViewImage();
+    }
 
     // if current movement is over
     if(!animate_)
