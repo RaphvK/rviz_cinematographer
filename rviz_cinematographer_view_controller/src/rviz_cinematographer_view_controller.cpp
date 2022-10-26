@@ -659,6 +659,8 @@ float CinematographerViewController::computeRelativeProgressInSpace(double relat
 
 void CinematographerViewController::update(float dt, float ros_dt)
 {
+  if (ros_dt == 0) return;
+
   updateAttachedSceneNode();
 
   // there has to be at least two positions in the buffer - start and goal
