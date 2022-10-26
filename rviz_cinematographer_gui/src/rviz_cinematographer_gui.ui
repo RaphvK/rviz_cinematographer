@@ -874,10 +874,10 @@ border: 4px solid gray;
                 <double>1.000000000000000</double>
                </property>
                <property name="maximum">
-                <double>100.000000000000000</double>
+                <double>30.000000000000000</double>
                </property>
                <property name="value">
-                <double>100.000000000000000</double>
+                <double>10.000000000000000</double>
                </property>
               </widget>
              </item>
@@ -1330,7 +1330,7 @@ border: 4px solid gray;
             <string>Frame of the markers.</string>
            </property>
            <property name="text">
-            <string>base_link</string>
+            <string>ego_vehicle</string>
            </property>
            <property name="frame">
             <bool>true</bool>
